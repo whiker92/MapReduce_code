@@ -1,4 +1,4 @@
-// yuan shi ban ben, ke yun xing.
+// 原始版本 可运行 out3为关联规则结果
 
 import java.io.IOException;
 import java.util.*;
