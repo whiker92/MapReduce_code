@@ -1,4 +1,6 @@
-// 原始版本 可运行 out3为关联规则结果
+// 原始版本 可运行于伪分布式中 
+// 利用hbase 存储中间结果
+// 支持度为5 out3为关联规则结果
 
 import java.io.IOException;
 import java.util.*;
