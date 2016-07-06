@@ -3,16 +3,7 @@
  * 
  *  Apriori Algorithm: http://www.codeproject.com/KB/recipes/AprioriAlgorithm.aspx
  * 
- *  Steps to Run:
- *  =============
- * 1. javac -cp <path to hadoop>/hadoop-0.20.2-core.jar:<path to log4j jar>/log4j/apache-log4j-1.2.16/log4j-1.2.16.jar:<path to hbase>/hbase/hbase-0.20.6.jar \
- *	  -d bin src/apriori.java
- * 2. jar -cvf apriori.jar -C bin .
- * 3. <path to hadoop>/bin/hadoop jar ../apriori.jar apriori /in /out2 /out2c /out2a
- * 
- *  Display Output:
- *  ===============
- *  <path to hadoop>/bin/hadoop fs -ls /
+ *  支持度5 频繁集于out2中
  * 
  *  Note:
  *  ======
