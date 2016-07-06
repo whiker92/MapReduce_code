@@ -183,7 +183,16 @@ public class apriori {
 			if (!lst.isEmpty()) {
 				CandidatesGenRecursion(lst, combinations, loop, 0, 0, context);
 			}
-
+			for(String i:lst){
+				word.set(i.toString());
+				count.set(Integer.toString(1));
+				try {
+					context.write(word, count);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
