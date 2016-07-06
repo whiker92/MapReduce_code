@@ -1,7 +1,17 @@
-// 原始版本 可运行于伪分布式中 
-// 利用hbase 存储中间结果
-// 支持度为5 out3为关联规则结果
 
+/*
+ * 
+ *  Apriori Algorithm: http://www.codeproject.com/KB/recipes/AprioriAlgorithm.aspx
+ * 
+ *  原始版本 可运行于伪分布式中 
+ *  利用hbase 存储中间结果
+ *  支持度为5 out3为关联规则结果
+ * 
+ *  Note:
+ *  ======
+ *  Running the final code with log4j causes performance hit. Disable log4j in the final run
+ * 
+ */
 import java.io.IOException;
 import java.util.*;
 import java.lang.Integer.*;
