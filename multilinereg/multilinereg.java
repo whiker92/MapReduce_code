@@ -5,7 +5,7 @@
  *  主要思想：
 		在Mapper中进行SGD：theta(j) = theta(j)+alpha*(y-y')*x(j)
 		在Reducer中进行加和，取平均值。
-	缺点：
+    缺点：
 		SGD刚开始时的theta值偏差较大，因此取平均值得到的theta，对于样本数比较小的情况下偏差大。
  */
 
