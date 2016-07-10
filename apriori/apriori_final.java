@@ -112,13 +112,14 @@ public class apriori {
 		@Override
 		public void map(LongWritable key, Text value, Context context) throws IOException {
 			Configuration conf = context.getConfiguration();
+			String databaseName = conf.get("databaseName");
 			int Support = Integer.parseInt(conf.get("Support"));
 			
 			String line = value.toString();
 			StringTokenizer tokenizer = new StringTokenizer(line);
 
 			Configuration config = HBaseConfiguration.create();
-			HTable tableC = new HTable(config, "FreqItems");
+			HTable tableC = new HTable(config, databaseName);
 			Vector<String> lst = new Vector<String>();
 			int loop = 0;
 			while (tokenizer.hasMoreTokens()) {
@@ -152,6 +153,7 @@ public class apriori {
 					e.printStackTrace();
 				}
 			}
+			tableC.close();
 		}
 	}
 
@@ -160,15 +162,17 @@ public class apriori {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException {
 			Iterator<Text> iterator = values.iterator();
 			int sum = 0;
-
+			Configuration conf = context.getConfiguration();
+			String databaseName = conf.get("databaseName");
+			
 			Configuration config = HBaseConfiguration.create();
 			HBaseAdmin hBaseAdmin = new HBaseAdmin(config);
-			HTableDescriptor tableDescriptor = new HTableDescriptor("FreqItems");
+			HTableDescriptor tableDescriptor = new HTableDescriptor(databaseName);
 			tableDescriptor.addFamily(new HColumnDescriptor("count"));
-			if (!hBaseAdmin.tableExists("FreqItems")) {
+			if (!hBaseAdmin.tableExists(databaseName)) {
 				hBaseAdmin.createTable(tableDescriptor);
 			}
-			HTable table = new HTable(config, Bytes.toBytes("FreqItems"));
+			HTable table = new HTable(config, databaseName);
 			Put p = new Put(Bytes.toBytes(key.toString()));
 
 			while (iterator.hasNext()) {
@@ -184,6 +188,8 @@ public class apriori {
 				e.printStackTrace();
 			}
 			table.put(p);
+			table.close();
+			hBaseAdmin.close();
 		}
 	}
 
@@ -192,13 +198,14 @@ public class apriori {
 		@Override
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException {
 			Configuration conf = context.getConfiguration();
+			String databaseName = conf.get("databaseName");
 			int Support = Integer.parseInt(conf.get("Support"));
 			
 			Iterator<Text> iterator = values.iterator();
 			int sum = 0;
 
 			Configuration config = HBaseConfiguration.create();
-			HTable table = new HTable(config, "FreqItems");
+			HTable table = new HTable(config, databaseName);;
 			Put p = new Put(Bytes.toBytes(key.toString()));
 
 			while (iterator.hasNext()) {
@@ -214,6 +221,7 @@ public class apriori {
 					e.printStackTrace();
 				}
 				table.put(p);
+				table.close();
 			}
 		}
 	}
@@ -221,21 +229,24 @@ public class apriori {
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
 		conf.set("Support", "5");
+		
 		Date dt;
 		long start, end;
 		dt = new Date();
 		start = dt.getTime();
+		conf.set("databaseName", "FreqItems"+Long.toString(start));
 
 		args[1] = "hdfs://localhost:9000/output_apriori/" + start + "/out1";
 		args[2] = "hdfs://localhost:9000/output_apriori/" + start + "/out2";
 
-		Configuration config = HBaseConfiguration.create();
-		HBaseAdmin hBaseAdmin = new HBaseAdmin(config);
-		if (hBaseAdmin.tableExists("FreqItems")) {
-			hBaseAdmin.disableTable("FreqItems");
-			hBaseAdmin.deleteTable("FreqItems");
-			System.out.println("In main: FreqItems is exist,detele....");
-		}
+//		Configuration config = HBaseConfiguration.create();
+//		HBaseAdmin hBaseAdmin = new HBaseAdmin(config);
+//		if (hBaseAdmin.tableExists("FreqItems")) {
+//			hBaseAdmin.disableTable("FreqItems");
+//			hBaseAdmin.deleteTable("FreqItems");
+//			System.out.println("In main: FreqItems is exist,detele....");
+//		}
+		
 		Job job = new Job(conf, "apriori freq items");
 		job.setJarByClass(apriori.class);
 		job.setMapperClass(FrequentItemsMap.class);
@@ -257,6 +268,7 @@ public class apriori {
 
 		Configuration conf1 = new Configuration();
 		conf1.set("Support", "5");
+		conf1.set("databaseName", "FreqItems"+Long.toString(start));
 		Job job2 = new Job(conf1, "apriori candidate gen");
 		job2.setJarByClass(apriori.class);
 
